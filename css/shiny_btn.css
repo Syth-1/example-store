@@ -1,0 +1,160 @@
+/* based on:
+https://codepen.io/nw/pen/GRBqEV
+-- Flat & Shiny Button (hover effect)
+Nate Watson 
+// removed "bourbon" scss import requirement
+
+---------------------------------------------
+
+$col-primary: #00c7ec;
+$corner-radius: 5px;
+
+body {
+  background-color: #012839;
+  text-align: center;
+  padding-top: 50px;
+}
+
+.button {
+  text-decoration: none;
+  text-transform: uppercase;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+  font-size: 30px;
+
+  display: inline-block;
+  position: relative;
+  text-align: center;
+  color: $col-primary;
+  border: 1px solid $col-primary;
+  border-radius: $corner-radius;
+
+  line-height: 3em;
+  padding-left: 5em;
+  padding-right: 5em;
+
+  box-shadow: 0 0 0 0 transparent;
+
+  transition: all 0.2s ease-in;
+
+  &:hover {
+    color: white;
+    box-shadow: 0 0 30px 0 transparentize($col-primary, 0.5);
+    background-color: $col-primary;
+
+    transition: all 0.2s ease-out;
+
+    &:before {
+      animation: shine 0.5s 0s linear;
+    }
+  }
+
+  &:active {
+    box-shadow: 0 0 0 0 transparent;
+    transition: box-shadow 0.2s ease-in;
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    width: 0px;
+    height: 86%;
+    position: absolute;
+    top: 7%;
+    left: 0%;
+
+    opacity: 0;
+    background: white;
+    box-shadow: 0 0 15px 3px white;
+    transform: skewX(-20deg);
+  }
+}
+
+@keyframes shine {
+  from {
+    opacity: 0;
+    left: 0%;
+  }
+
+  50% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    left: 100%;
+  }
+}
+
+*/
+
+
+/* -- css version -- */
+
+:root {
+    --shiny-theme: 0, 199, 236;
+  } /* allows us to use rgba and alter transparecy! */
+  
+  
+  .shiny-button {
+  
+    display: inline-block;
+    position: relative;
+    color: rgb(var(--shiny-theme));
+    border: 1px solid rgb(var(--shiny-theme));
+    box-shadow: 0 0 30px 0 rgba(var(--shiny-theme), 0.5);
+
+  
+    box-shadow: 0 0 0 0 transparent;
+  
+    transition: all 0.2s ease-in;
+  }
+  
+  .shiny-button:hover {
+    color: white;
+    box-shadow: 0 0 30px 0 rgba(var(--shiny-theme), 0.5);
+    background-color: rgb(var(--shiny-theme));
+  
+    transition: all 0.2s ease-out;
+  }
+
+  
+  .shiny-button:hover:before {
+    animation: shine 0.3s 0.1s linear;
+  }
+  
+  .shiny-button:active {
+    box-shadow: 0 0 0 0 transparent;
+    transition: box-shadow 0.2s ease-in;
+  }
+  
+  .shiny-button:before {
+    content: '';
+    display: block;
+    width: 0px;
+    height: 86%;
+    position: absolute;
+    top: 7%;
+    left: 0%;
+  
+    opacity: 0;
+    background: white;
+    box-shadow: 0 0 15px 3px white, 25px 0 5px 0.5px white;
+    transform: skewX(-20deg);
+  }
+  
+  
+  @keyframes shine {
+    from {
+      opacity: 0;
+      left: 0%;
+    }
+  
+    5%, 75% {
+      opacity: 1;
+    }
+    
+    to {
+      opacity: 0;
+      left: 100%;
+    }
+  }

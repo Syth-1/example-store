@@ -1,0 +1,216 @@
+@import './constants.css';
+@import './shiny_btn.css';
+
+:root { 
+    /* ensures everything is resized correctly */
+    --carosel-size : 100%; /* does not work in px - so we use internal ↓*/ 
+    --carosel-size-internal: 100vw; /* more or less near to 100% */
+    --paginator-size: max(5px, calc(0.0075 * var(--carosel-size-internal)));
+    /* anything smaller than 5px hard to click! */
+}
+
+.main-carosel { 
+    position: relative; 
+    overflow-x: hidden;
+    width: var(--carosel-size);
+    transition: all 500ms;
+    border-radius: 5px;
+}
+
+@media only screen and (min-width: 125vh) {
+    :root {
+        --carosel-size: 60vw;
+        --carosel-size-internal: var(--carosel-size);
+    }
+
+    .main-carosel {
+        
+        box-shadow: 100px 0px 150px -75px rgba(0,0,0,0.75), -100px 0px 150px -75px rgba(0,0,0,0.75);
+    }
+    
+}
+
+/* thought this might look cool on mobile, it wasnt ;-; */
+/* @media only screen and (max-width: 450px) {
+    .main-carosel {
+        width: calc(100% + 20px);
+        margin: -10px;
+        border-radius: 0px;
+    }
+} */
+
+#carosel-container {
+    display: grid; 
+    grid-auto-flow: column;
+    grid-auto-columns: 110%;
+    height: fit-content; 
+    /* transform: translateX(-110%); */
+    /* animation: loop 20s ease-in-out infinite;  */
+    transition: transform 1s ease-in-out;
+}
+
+.carosel-img { 
+    overflow: hidden; 
+    align-content: center;
+    /*
+    https://bennettfeely.com/clippy/
+    using this website to get paralellogram shape 
+    could not get any steeper angle ;-; wish it was a steeper angle!
+    */
+    clip-path: polygon(5% 0, 100% 0%, 95% 100%, 0% 100%);
+    width: 105%; 
+    margin-left: -6%;
+    object-fit: fill; 
+    aspect-ratio: 16/9;
+    vertical-align: bottom;
+    /* took me forever to figure out why there was a weird space
+    answer: >> https://stackoverflow.com/a/5804278
+    */
+}
+
+
+.carosel-paginator { 
+    position: absolute; 
+    bottom: 5%;
+    display: grid; 
+    width: 100%; 
+    align-items: center;
+    justify-content: center;
+}
+
+#carosel-paginator-container {
+    display: flex; 
+    flex-direction: row;
+    align-items: center;
+    gap: var(--paginator-size); 
+    justify-content: center;
+    width: 100%; 
+    height: 100%;
+    margin: var(--paginator-size);
+    background-color: rgba(80, 80, 80, 0.1);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    border-radius: calc(var(--paginator-size) * 0.75);
+    
+}
+
+.carosel-indicator {
+    border-radius: 50%;
+    width: var(--paginator-size); 
+    height: var(--paginator-size); 
+    background-color: var(--ui-hov); 
+    transition: all 500ms ease-in-out;
+}
+
+#content-1 {
+    display: flex; 
+    flex-direction: column;
+    position: absolute;
+    color: black; 
+    width: 100%;
+    top: 0px; 
+    left: 0px; 
+    justify-content: center;
+
+}
+
+
+@keyframes loop {
+    0% {
+        transform: translateX(0%)
+    }
+    33% {
+        transform: translateX(0%)
+    }
+    37% {
+        transform:translateX(-110%);
+    }
+    66% {
+        transform:translateX(-110%);
+    }
+    70% {
+        transform: translateX(-220%); 
+    }
+    96% {
+        transform: translateX(-220%); 
+    }
+    100% {
+        transform: translateX(0%)
+    }
+}
+
+/* https://youtu.be/JHregeIsjPQ?t=158 */ 
+.carosel-content {
+    display: grid; 
+    grid-template-areas: 'stack';
+    vertical-align: center;
+    overflow: visible;
+    position: relative;
+}
+
+.carosel-content > * {
+    grid-area: stack; 
+}
+
+.carosel-overlap { 
+    z-index: 0; 
+    font-size: calc(var(--carosel-size-internal) * 0.1);
+}
+
+/* all overlap items will have correct animation transition time by default */
+.carosel-content > .carosel-overlap > * {
+    transition: opacity 200ms; 
+}
+
+.carosel-content[data-focus="true"] > .carosel-overlap > * {
+    transition: opacity 1s ease-in-out; 
+}
+
+/* if would like to fade in: */
+.carosel-content > .carosel-overlap > .fade-in {
+    opacity: 0; 
+}
+
+.carosel-content[data-focus="true"] > .carosel-overlap > .fade-in {
+    opacity: 1;
+}
+
+
+#carosel-item-2[data-focus="true"] > img {
+    transition: all 1s ease-in-out; 
+    filter: blur(4px);
+}
+
+#carosel-item-2 > .carosel-overlap > p { 
+    margin: 0; 
+}
+
+#carosel-item-2 > .carosel-overlap { 
+    display: flex; 
+    flex-direction: column;
+    gap: calc(var(--carosel-size-internal) * 0.035);; 
+    padding-top: 10%;
+    margin-left: 5%;
+    font-family: 'Orbitron';
+}
+
+#carosel-item-2 > .carosel-overlap > button { 
+    --shiny-theme: 0, 72, 143;
+    padding: calc(var(--carosel-size-internal) * 0.01);
+    font-size: 25%;
+    width: fit-content;
+    border-radius: calc(var(--paginator-size) * 0.75);
+    color: rgb(var(--shiny-theme));
+    background-color: transparent;
+    border-color: rgb(var(--shiny-theme));
+    border-width: calc(var(--carosel-size-internal) * 0.0025);
+    border-style: solid;
+    font-family: 'Orbitron';
+    background-size: 50px 50px; 
+    transition: all 0.2s ease-in;
+}
+
+#carosel-item-2 > .carosel-overlap > button:hover { 
+    background-color: rgb(var(--shiny-theme));
+    color: white; 
+}
