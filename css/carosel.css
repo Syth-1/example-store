@@ -210,7 +210,7 @@
 }
 
 #carosel-item-2>.carosel-overlap>button {
-    --shiny-theme: 0, 72, 143;
+    --shiny-theme: 201, 155, 245;
     padding: calc(var(--carosel-size-internal) * 0.01);
     font-size: 25%;
     width: fit-content;
