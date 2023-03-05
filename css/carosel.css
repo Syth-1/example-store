@@ -1,16 +1,21 @@
 @import './constants.css';
 @import './shiny_btn.css';
 
-:root { 
+/* main carosel components were made by me! */
+/* this part took 70% of the project - on the plus side, I learnt a bunch! */
+
+:root {
     /* ensures everything is resized correctly */
-    --carosel-size : 100%; /* does not work in px - so we use internal ↓*/ 
-    --carosel-size-internal: 100vw; /* more or less near to 100% */
+    --carosel-size: 100%;
+    /* does not work in px - so we use internal ↓*/
+    --carosel-size-internal: 100vw;
+    /* more or less near to 100% */
     --paginator-size: max(5px, calc(0.0075 * var(--carosel-size-internal)));
     /* anything smaller than 5px hard to click! */
 }
 
-.main-carosel { 
-    position: relative; 
+.main-carosel {
+    position: relative;
     overflow-x: hidden;
     width: var(--carosel-size);
     transition: all 500ms;
@@ -24,10 +29,9 @@
     }
 
     .main-carosel {
-        
-        box-shadow: 100px 0px 150px -75px rgba(0,0,0,0.75), -100px 0px 150px -75px rgba(0,0,0,0.75);
+        box-shadow: 100px 0px 150px -75px rgba(0, 0, 0, 0.75), -100px 0px 150px -75px rgba(0, 0, 0, 0.75);
     }
-    
+
 }
 
 /* thought this might look cool on mobile, it wasnt ;-; */
@@ -40,17 +44,18 @@
 } */
 
 #carosel-container {
-    display: grid; 
+    display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 110%;
-    height: fit-content; 
+    height: fit-content;
+    /* -- before using js for animating carosel: -- */
     /* transform: translateX(-110%); */
     /* animation: loop 20s ease-in-out infinite;  */
     transition: transform 1s ease-in-out;
 }
 
-.carosel-img { 
-    overflow: hidden; 
+.carosel-img {
+    overflow: hidden;
     align-content: center;
     /*
     https://bennettfeely.com/clippy/
@@ -58,58 +63,61 @@
     could not get any steeper angle ;-; wish it was a steeper angle!
     */
     clip-path: polygon(5% 0, 100% 0%, 95% 100%, 0% 100%);
-    width: 105%; 
+    width: 105%;
     margin-left: -6%;
-    object-fit: fill; 
+    object-fit: fill;
     aspect-ratio: 16/9;
     vertical-align: bottom;
     /* took me forever to figure out why there was a weird space
     answer: >> https://stackoverflow.com/a/5804278
     */
+    pointer-events: none;
 }
 
 
-.carosel-paginator { 
-    position: absolute; 
+.carosel-paginator {
+    position: absolute;
     bottom: 5%;
-    display: grid; 
-    width: 100%; 
+    display: grid;
+    width: 100%;
     align-items: center;
     justify-content: center;
+    pointer-events: none;
 }
 
 #carosel-paginator-container {
-    display: flex; 
+    display: flex;
     flex-direction: row;
     align-items: center;
-    gap: var(--paginator-size); 
+    gap: var(--paginator-size);
     justify-content: center;
-    width: 100%; 
+    width: 100%;
     height: 100%;
     margin: var(--paginator-size);
     background-color: rgba(80, 80, 80, 0.1);
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
     border-radius: calc(var(--paginator-size) * 0.75);
-    
+
 }
 
-.carosel-indicator {
+.carosel-page-indicator {
     border-radius: 50%;
-    width: var(--paginator-size); 
-    height: var(--paginator-size); 
-    background-color: var(--ui-hov); 
+    width: var(--paginator-size);
+    height: var(--paginator-size);
+    background-color: var(--ui-hov);
     transition: all 500ms ease-in-out;
+    pointer-events: all;
 }
 
 #content-1 {
-    display: flex; 
+    display: flex;
     flex-direction: column;
     position: absolute;
-    color: black; 
+    color: black;
     width: 100%;
-    top: 0px; 
-    left: 0px; 
+    top: 0px;
+    left: 0px;
     justify-content: center;
 
 }
@@ -119,82 +127,89 @@
     0% {
         transform: translateX(0%)
     }
+
     33% {
         transform: translateX(0%)
     }
+
     37% {
-        transform:translateX(-110%);
+        transform: translateX(-110%);
     }
+
     66% {
-        transform:translateX(-110%);
+        transform: translateX(-110%);
     }
+
     70% {
-        transform: translateX(-220%); 
+        transform: translateX(-220%);
     }
+
     96% {
-        transform: translateX(-220%); 
+        transform: translateX(-220%);
     }
+
     100% {
         transform: translateX(0%)
     }
 }
 
-/* https://youtu.be/JHregeIsjPQ?t=158 */ 
+/* https://youtu.be/JHregeIsjPQ?t=158 */
 .carosel-content {
-    display: grid; 
+    display: grid;
     grid-template-areas: 'stack';
     vertical-align: center;
     overflow: visible;
     position: relative;
 }
 
-.carosel-content > * {
-    grid-area: stack; 
+.carosel-content>* {
+    grid-area: stack;
 }
 
-.carosel-overlap { 
-    z-index: 0; 
+.carosel-overlap {
+    z-index: 0;
     font-size: calc(var(--carosel-size-internal) * 0.1);
 }
 
 /* all overlap items will have correct animation transition time by default */
-.carosel-content > .carosel-overlap > * {
-    transition: opacity 200ms; 
+.carosel-content>.carosel-overlap>* {
+    transition: opacity 200ms;
 }
 
-.carosel-content[data-focus="true"] > .carosel-overlap > * {
-    transition: opacity 1s ease-in-out; 
+.carosel-content[data-focus="true"]>.carosel-overlap>* {
+    transition: opacity 1s ease-in-out;
 }
 
 /* if would like to fade in: */
-.carosel-content > .carosel-overlap > .fade-in {
-    opacity: 0; 
+.carosel-content>.carosel-overlap>.fade-in {
+    opacity: 0;
 }
 
-.carosel-content[data-focus="true"] > .carosel-overlap > .fade-in {
+.carosel-content[data-focus="true"]>.carosel-overlap>.fade-in {
     opacity: 1;
 }
 
 
-#carosel-item-2[data-focus="true"] > img {
-    transition: all 1s ease-in-out; 
+#carosel-item-2[data-focus="true"]>img {
+    transition: all 1s ease-in-out;
     filter: blur(4px);
 }
 
-#carosel-item-2 > .carosel-overlap > p { 
-    margin: 0; 
+#carosel-item-2>.carosel-overlap>p {
+    margin: 0;
 }
 
-#carosel-item-2 > .carosel-overlap { 
-    display: flex; 
+#carosel-item-2>.carosel-overlap {
+    display: flex;
     flex-direction: column;
-    gap: calc(var(--carosel-size-internal) * 0.035);; 
+    gap: calc(var(--carosel-size-internal) * 0.035);
+    ;
     padding-top: 10%;
     margin-left: 5%;
     font-family: 'Orbitron';
 }
 
-#carosel-item-2 > .carosel-overlap > button { 
+#carosel-item-2>.carosel-overlap>button {
     --shiny-theme: 0, 72, 143;
     padding: calc(var(--carosel-size-internal) * 0.01);
     font-size: 25%;
@@ -206,11 +221,347 @@
     border-width: calc(var(--carosel-size-internal) * 0.0025);
     border-style: solid;
     font-family: 'Orbitron';
-    background-size: 50px 50px; 
+    background-size: 50px 50px;
     transition: all 0.2s ease-in;
 }
 
-#carosel-item-2 > .carosel-overlap > button:hover { 
+#carosel-item-2>.carosel-overlap>button:hover {
     background-color: rgb(var(--shiny-theme));
-    color: white; 
+    color: white;
+}
+
+
+
+#blur-over {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0%;
+    --blur-over: blur(calc(var(--carosel-size-internal) * 0.1));
+    -webkit-backdrop-filter: var(--blur-over);
+    backdrop-filter: var(--blur-over);
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.5s ease-in;
+}
+
+#carosel-3-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-main)
+}
+
+#blob {
+    background-color: white;
+    height: calc(var(--carosel-size-internal) * 0.15);
+    aspect-ratio: 1;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: linear-gradient(to right,
+        hsl(164.19, 93.67%, 69.02%) 0%,
+        hsl(164.68, 91.99%, 69.04%) 7.8%,
+        hsl(166.2, 87.19%, 69.09%) 14.5%,
+        hsl(168.97, 79.66%, 69.08%) 20.4%,
+        hsl(173.53, 69.8%, 68.94%) 25.6%,
+        hsl(180.94, 59.59%, 68.89%) 30.4%,
+        hsl(191.11, 61.82%, 71.31%) 34.9%,
+        hsl(203.21, 64.66%, 73.75%) 39.4%,
+        hsl(217.12, 68.16%, 76.13%) 44.1%,
+        hsl(232.53, 72.33%, 78.38%) 49.2%,
+        hsl(247.83, 79.48%, 78.18%) 55%,
+        hsl(258.05, 86.95%, 75.96%) 61.5%,
+        hsl(264.68, 92.33%, 73.8%) 69.1%,
+        hsl(268.93, 95.93%, 71.9%) 77.9%,
+        hsl(271.37, 98%, 70.52%) 88.1%,
+        hsl(272.19, 98.69%, 70%) 100%);
+
+    transition: all 5s linear;
+    display: none;
+    pointer-events: none;
+    opacity: 0;
+}
+
+#carosel-item-3[data-focus="true"]>#blob {
+    /* transition: opacity 0s linear;  */
+    display: block;
+    animation: blob-fade-anim 1s linear 500ms forwards,
+        rotateBlob 10s infinite linear;
+}
+
+#carosel-3-background:hover~#blob {
+    transition: all 1.5s ease-out;
+}
+
+@keyframes blob-fade-anim {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes rotateBlob {
+    from {
+        transform: translate(-50%, -50%) rotateZ(0deg);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) rotateZ(180deg) scale(1, 1.5);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotateZ(360deg);
+    }
+}
+
+/* ---carosel left / right indicator--- */
+
+.carosel-swipe-indicator,
+.pre-indicator {
+    opacity: 0%;
+    position: absolute;
+    top: 0%;
+    height: 100%;
+    width: 10%;
+    transition: all 0.5s;
+    pointer-events: none;
+}
+
+.carosel-swipe-indicator {
+    /* 
+    bezier curves generated from here: 
+    https://larsenwork.com/easing-gradients/
+    */
+    --blur-gradient:
+        hsl(0, 0%, 0%) 0%,
+        hsla(0, 0%, 0%, 0.956) 17.7%,
+        hsla(0, 0%, 0%, 0.897) 31.3%,
+        hsla(0, 0%, 0%, 0.827) 41.4%,
+        hsla(0, 0%, 0%, 0.747) 48.5%,
+        hsla(0, 0%, 0%, 0.661) 53.3%,
+        hsla(0, 0%, 0%, 0.57) 56.2%,
+        hsla(0, 0%, 0%, 0.478) 58%,
+        hsla(0, 0%, 0%, 0.387) 59.2%,
+        hsla(0, 0%, 0%, 0.3) 60.3%,
+        hsla(0, 0%, 0%, 0.219) 62.1%,
+        hsla(0, 0%, 0%, 0.147) 65%,
+        hsla(0, 0%, 0%, 0.087) 69.6%,
+        hsla(0, 0%, 0%, 0.04) 76.6%,
+        hsla(0, 0%, 0%, 0.011) 86.6%,
+        hsla(0, 0%, 0%, 0) 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(var(--carosel-size-internal) * 0.05);
+
+    --blur-amount: 15px;
+    -webkit-backdrop-filter: blur(var(--blur-amount));
+    backdrop-filter: blur(var(--blur-amount));
+    z-index: 10;
+    /* on top of radial background - allows text to be 'readable' regardless of background(?) being white!*/
+    --text-padding: 1.5em;
+}
+
+.pre-indicator {
+    --background-gradient:
+        hsla(0, 0%, 0%, 0.5) 0%,
+        hsla(0, 0%, 0%, 0.407) 17.5%,
+        hsla(0, 0%, 0%, 0.325) 30.3%,
+        hsla(0, 0%, 0%, 0.256) 39.2%,
+        hsla(0, 0%, 0%, 0.197) 44.9%,
+        hsla(0, 0%, 0%, 0.148) 48.1%,
+        hsla(0, 0%, 0%, 0.108) 49.6%,
+        hsla(0, 0%, 0%, 0.076) 50%,
+        hsla(0, 0%, 0%, 0.051) 50%,
+        hsla(0, 0%, 0%, 0.032) 50.4%,
+        hsla(0, 0%, 0%, 0.019) 51.9%,
+        hsla(0, 0%, 0%, 0.009) 55.1%,
+        hsla(0, 0%, 0%, 0.004) 60.8%,
+        hsla(0, 0%, 0%, 0.001) 69.7%,
+        hsla(0, 0%, 0%, 0) 82.5%,
+        hsla(0, 0%, 0%, 0) 100%;
+}
+
+/* left */
+#carosel-left-indicator,
+#carosel-pre-left-indicator {
+    border-radius: 0% 50% 50% 0;
+}
+
+#carosel-left-indicator {
+    --left-grad: radial-gradient(at left, var(--blur-gradient));
+    /* webkit mask not working on chrome for some reason ;-; - mask works fine on FF */
+    mask: var(--left-grad);
+    -webkit-mask: var(--left-grad);
+}
+
+#carosel-left-indicator[data-left="true"],
+#carosel-left-indicator[data-left="true"]~#carosel-pre-left-indicator {
+    width: 20%;
+    opacity: 100%;
+}
+
+#carosel-left-indicator>span {
+    padding-right: var(--text-padding);
+}
+
+#carosel-pre-left-indicator {
+    background-image: radial-gradient(at left, var(--background-gradient));
+}
+
+/* right */
+#carosel-right-indicator,
+#carosel-pre-right-indicator {
+    left: 90%;
+    border-radius: 50% 0% 0% 50%;
+}
+
+#carosel-right-indicator {
+    --right-grad: radial-gradient(at right, var(--blur-gradient));
+    /* background-image: radial-gradient(at right, var(--background-gradient)); */
+    mask: var(--right-grad);
+    -webkit-mask: var(--right-grad);
+}
+
+#carosel-right-indicator[data-right="true"],
+#carosel-right-indicator[data-right="true"]~#carosel-pre-right-indicator {
+    width: 20%;
+    opacity: 100%;
+    left: 80%;
+}
+
+#carosel-right-indicator>span {
+    padding-left: var(--text-padding);
+}
+
+#carosel-pre-right-indicator {
+    background-image: radial-gradient(at right, var(--background-gradient));
+}
+
+
+
+h3 {
+    color: white;
+    font-size: calc(var(--carosel-size-internal) * 0.05);
+    font-family: "Space Mono", monospace;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+#target {
+    position: relative;
+    transition: opacity 1s linear, color 1s linear;
+    color: white;
+}
+
+
+@keyframes background-pan {
+    from {
+        background-position: 0% center;
+    }
+
+    to {
+        background-position: -200% center;
+    }
+}
+
+@keyframes scale {
+
+    from,
+    to {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(180deg);
+    }
+}
+
+
+.magic {
+    display: inline-block;
+    position: relative;
+}
+
+.magic>.magic-star {
+    --size: clamp(20px, 1.5vw, 30px);
+
+    animation: scale 700ms ease forwards;
+    display: block;
+    height: var(--size);
+    left: var(--star-left);
+    position: absolute;
+    top: var(--star-top);
+    width: var(--size);
+}
+
+.magic>.magic-star>svg {
+    animation: rotate 1000ms linear infinite;
+    display: block;
+    opacity: 0.7;
+}
+
+.magic>#star1>svg>path {
+    fill: var(--color1);
+}
+
+.magic>#star2>svg>path {
+    fill: var(--color2);
+}
+
+.magic>#star3>svg>path {
+    fill: var(--color3);
+}
+
+#target[data-active="true"]::before {
+    opacity: 1;
+}
+
+#target[data-active="true"] {
+    color: transparent;
+}
+
+#target::before {
+    animation: background-pan 3s linear infinite;
+    background: linear-gradient(to right,
+        var(--color1),
+        var(--color2),
+        var(--color3),
+        var(--color1)
+    );
+
+    background-size: 200%;
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    white-space: nowrap;
+
+    content: attr(data-content);
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: opacity 1s ease-out;
 }

@@ -1,0 +1,147 @@
+/* contact form: https://codepen.io/nikhil8krishnan/pen/gaybLK */
+
+/*
+edited from original (scss) - uses vanilla css, 
+removed javascript requirements too! 
+*/
+
+@import './constants.css';
+
+:root { 
+    --input-back-color: rgba(255, 255, 255, .65);
+}
+
+.contact-form {
+    margin-top: 30px;
+}
+
+.form-group {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.contact-form .input-block {
+    background-color: var(--input-back-color);
+    width: 100%;
+    height: 60px;
+    padding-left: 25px;
+    position: relative;
+    margin-bottom: 20px;
+    transition: all 0.3s ease-out;
+    border-radius: 3px;
+}
+
+.input-block:focus-within {
+    background-color: #fff;
+}
+
+.contact-form .input-block.textarea {
+    height: auto;
+}
+
+.contact-form .input-block.textarea .form-control {
+    min-height: 6ch;
+    resize: vertical;
+    transition: margin 0.1s ease-in-out;
+}
+
+.contact-form .input-block label {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    display: block;
+    margin: 0;
+    font-weight: 300;
+    z-index: 1;
+    color: #333;
+    font-size: 18px;
+    line-height: 10px;
+}
+
+.contact-form .input-block .form-control {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    height: auto;
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    color: #333;
+    width: 100%;
+    height: 100%;
+}
+
+.contact-form .square-button {
+    background-color: var(--input-back-color);
+    border-radius: 3px;
+    color: black;
+    mix-blend-mode: screen;
+    font-size: 26px;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-align: center;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    padding: 0 60px;
+    height: 60px;
+    border: none;
+    width: 100%;
+}
+
+.contact-form .square-button:hover,
+.contact-form .square-button:focus {
+    background-color: white;
+}
+
+@media (min-width: 768px) {
+    .contact-wrap {
+        width: 60%;
+        margin: auto;
+    }
+
+    @media (min-width: 1440px) {
+        .form-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px; 
+        }
+    }
+}
+
+.form-control~label {
+    transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus~label,
+.form-control:not(:placeholder-shown)~label {
+    top: 10px;
+    font-size: 14px;
+}
+
+.form-control:focus,
+.form-control:not(:placeholder-shown) {
+    margin-top: 5px;
+
+}
+
+.input-block.textarea .form-control:focus,
+.input-block.textarea .form-control:not(:placeholder-shown) {
+    margin-top: 25px;
+}
+
+#end-container { 
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    margin-top: 10px; 
+}
+
+#end-txt  { 
+    white-space: nowrap;
+}
+
+#logo-pic-end {
+    width: 5ch; 
+}

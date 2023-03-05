@@ -88,46 +88,46 @@ body {
 */
 
 
-/* -- css version -- */
+/* -- vanilla css version -- */
 
 :root {
     --shiny-theme: 0, 199, 236;
-  } /* allows us to use rgba and alter transparecy! */
-  
-  
-  .shiny-button {
-  
+}  /* allows us to use rgba and alter transparecy! */
+
+
+.shiny-button {
+
     display: inline-block;
     position: relative;
     color: rgb(var(--shiny-theme));
     border: 1px solid rgb(var(--shiny-theme));
     box-shadow: 0 0 30px 0 rgba(var(--shiny-theme), 0.5);
 
-  
+
     box-shadow: 0 0 0 0 transparent;
-  
+
     transition: all 0.2s ease-in;
-  }
-  
-  .shiny-button:hover {
+}
+
+.shiny-button:hover {
     color: white;
     box-shadow: 0 0 30px 0 rgba(var(--shiny-theme), 0.5);
     background-color: rgb(var(--shiny-theme));
-  
-    transition: all 0.2s ease-out;
-  }
 
-  
-  .shiny-button:hover:before {
+    transition: all 0.2s ease-out;
+}
+
+
+.shiny-button:hover:before {
     animation: shine 0.3s 0.1s linear;
-  }
-  
-  .shiny-button:active {
+}
+
+.shiny-button:active {
     box-shadow: 0 0 0 0 transparent;
     transition: box-shadow 0.2s ease-in;
-  }
-  
-  .shiny-button:before {
+}
+
+.shiny-button:before {
     content: '';
     display: block;
     width: 0px;
@@ -135,26 +135,27 @@ body {
     position: absolute;
     top: 7%;
     left: 0%;
-  
+
     opacity: 0;
     background: white;
+    /* added an extra shine */
     box-shadow: 0 0 15px 3px white, 25px 0 5px 0.5px white;
     transform: skewX(-20deg);
-  }
-  
-  
-  @keyframes shine {
+}
+
+
+@keyframes shine {
     from {
-      opacity: 0;
-      left: 0%;
+        opacity: 0;
+        left: 0%;
     }
-  
+
     5%, 75% {
-      opacity: 1;
+        opacity: 1;
     }
-    
+
     to {
-      opacity: 0;
-      left: 100%;
+        opacity: 0;
+        left: 100%;
     }
-  }
+}

@@ -1,7 +1,9 @@
 @import './constants.css';
 
 :root {
-    --card-size: clamp(150px, 40vw, 260px) 
+    --card-size: clamp(150px, 40vw, 260px);
+    --side-margin: 10px; 
+    --form-color: linear-gradient(to right, #543ab7 0%, #3e58ba 7.1428571429%, #2b72bc 14.2857142857%, #1b87be 21.4285714286%, #0f97bf 28.5714285714%, #07a3c0 35.7142857143%, #02aac1 42.8571428571%, #00acc1 50%, #00acc1 50%, #168ebe 57.1428571429%, #2974bc 64.2857142857%, #395fba 71.4285714286%, #454fb9 78.5714285714%, #4d43b8 85.7142857143%, #523cb7 92.8571428571%, #543ab7 100%);
 }
 
 * {
@@ -12,6 +14,10 @@
     box-sizing: border-box;
     object-fit: contain;
   }
+
+*:focus {
+    outline: none;
+}
 
 ::-webkit-scrollbar {
     background-color: #202324;
@@ -83,16 +89,38 @@ body {
     animation: live 15s ease-in-out infinite;  
 }
 
+.seperator-ln { 
+    display: flex; 
+    flex: auto; 
+    justify-content: center;
+    align-items: center;
+    width: 100%; 
+}
+
+h1 { 
+    white-space: nowrap;
+    text-align: center;
+}
+
+.sep { 
+    content: ' '; 
+    width: 15%;
+    background-color: white;
+    height: 2px;
+    margin: min(30px, 2%); 
+    border-radius: 7px; 
+    opacity: 20%; 
+}
 
 #main-div, .container { 
     display: grid;
     grid-template-rows: 1fr; /* single column */
     justify-items: center; /* centers all items inside */
-    margin: 10px; 
+    margin: var(--side-margin); 
 }
 
-#main-div { 
-    gap: 25px;
+#main-div > * { 
+    margin-bottom: 25px;
 }
 
 #img-grid { 
@@ -102,25 +130,29 @@ body {
     flex-wrap: wrap;
     /* 4 columns */
     gap: 10px; 
+    margin-bottom: 0;
     overflow: hidden;
-    width: min(100%, calc((var(--card-size) + 50px) * 4));
+    width: min(100%, calc((var(--card-size) + 50px) * 4)); /* control how many cards per row, (+1 for num cards) */
+    /* 3 - 4 per row is decent. */
 }
 
 .showcase-img { 
     transition:all 0.25s;
-    transform: scale(0.8);
+    transform: scale(1);
     z-index: 0;
-    width: 100%;
+    width: var(--card-size);
     object-fit: cover;
-    padding: 2% 5% 5% 5%;
-
+    vertical-align: bottom;
+    overflow: hidden; 
 }
 
 .showcase-img:hover { 
-    transform: scale(1)
+    transform: scale(1.2)
 }
 
 .container { 
+    justify-content: left;
+    
     overflow: hidden; 
     grid-template-columns: var(--card-size);
     background-color: var(--ui-bg);
@@ -132,10 +164,97 @@ body {
     margin: 2%;
 }
 
+.card-info { 
+    display: flex; 
+    flex-direction: column;
+    width: 100%; 
+    margin-left: 5%;
+    margin-top: 5%;  
+    height: 100%;
+    --left-padding: 10px; 
+    padding-right: 5%;
+}
+
+.card-info > *:not(:last-child) { 
+    margin-bottom: 10%; /* gap does not work! causes overflow in grid */
+ }
+
+.img-container {
+    overflow: hidden; 
+    transition: height 0.25s ease-in-out;
+}
+
+h2, h4 {
+    margin: 0; 
+    padding-left: var(--left-padding); 
+}
+
+.card-info > button { 
+    margin-left: var(--left-padding); /* gap does not work! causes overflow in grid */
+    width: calc(var(--card-size) * 0.35);
+    background-color: white;
+    color: black; 
+    margin-bottom: 3%;
+}
+
+.card-info > button:hover { 
+    background-color: #ddd;
+}
+
 h2 { 
-    font-size: clamp(100%, 5vw, 1.5em);
-    margin-top: 20px;
-    margin-bottom: 5px; 
+    font-size: calc(var(--card-size) * 0.125);
+    /* border-left: 4px solid var(--ui-main);
+    border-radius: 3px 0 0 3px; */
+}
+
+h4 {
+    font-size: calc(var(--card-size) * 0.1);
+}
+
+.price-tag { 
+    color: #52baea;
+    text-decoration: underline;
+    font-size: 85%;
+}
+
+#form {
+    width: 100%; 
+    height: 100%; 
+    opacity: 1; 
+    z-index: 10;
+    background-image: linear-gradient(to right, #ff512f, #dd2476);
+    background-image: var(--form-color);
+
+    height: calc(100% + var(--side-margin) * 2);
+    margin-bottom: calc(var(--side-margin) * 1);
+}
+
+
+/* 
+
+Thanks to the following resources for waves: 
+https://www.youtube.com/watch?v=pWYAzzfQP0w
+
+https://stackoverflow.com/questions/54494533/how-to-scale-svg-coordinates-in-the-range-0-and-1
+ 
+https://codepen.io/goodkatz/pen/LYPGxQz
+
+
+//  (yes i know it doesnt exactly fit the theme of the website,
+//  i took far too long making this all work, i gotta show it off some how .-.) 
+//  also svg have alot of capabilities people may not realize! 
+*/
+
+#form, .wave-container{
+    /* escaping grid padding! */
+    width: calc(100% + var(--side-margin) * 2);
+    margin-left: calc(var(--side-margin) * -1);
+    margin-right: calc(var(--side-margin) * -1);
+}
+
+#form {
+    padding-left: 2%; 
+    padding-right: 2%;
 }
 
 @keyframes live { 
@@ -148,11 +267,99 @@ h2 {
     }
 }
 
-/* 
-TODO: add line break: as such ↓
-https://jimclydemonge.medium.com/
+.wave-container { 
+    position: relative;
+    margin-bottom: -1px !important; 
+}
 
-add cards like this: 
-https://thisxdoesnotexist.com/
+.waves {
+    width: 100%;
+  position:relative;
+  height:15vh;
+  margin-bottom:-7px; /*Fix for safari gap*/
+  min-height:100px;
+  max-height:150px;
+}
 
-*/
+.hidden-svg { 
+    position: absolute; 
+    width: 0; 
+    height: 0; 
+}
+
+.main-wave {
+    width: 100%; 
+    height: 100%; 
+    top: 0%;
+    left: 0%;
+    position: absolute; 
+    background-image: var(--form-color);
+    clip-path: url(#curve);
+}
+
+.content {
+  position:relative;
+  height:20vh;
+  text-align:center;
+  background-color: white;
+  background-image: var(--form-color);
+
+}
+
+@keyframes background-pan-backwards {
+    from {
+        background-position: -200% center;
+    }
+
+    to {
+        background-position: 0% center;
+    }
+}
+
+.main-wave, #form { 
+    background-size: 200%;
+    animation: background-pan-backwards 20s linear infinite backwards;
+}
+
+/* Animation */
+
+.parallax > use {
+  animation: move-forever 25s cubic-bezier(.55,.5,.45,.5)     infinite;
+}
+.parallax > use:nth-child(1) {
+    /* background-image: var(--color1); */
+  animation-delay: -2s;
+  animation-duration: 5s;
+}
+.parallax > use:nth-child(2) {
+    /* background-color: var(--color1); */
+  animation-delay: -3s;
+  animation-duration: 7s;
+}
+.parallax > use:nth-child(3) {
+    background-color: var(--color1);
+  animation-delay: -4s;
+  animation-duration: 13s;
+}
+
+@keyframes move-forever {
+  0% {
+   transform: translate3d(-90px,0,0);
+  }
+  100% { 
+    transform: translate3d(85px,0,0);
+  }
+}
+/*Shrinking for mobile*/
+@media (max-width: 768px) {
+  .waves {
+    height:40px;
+    min-height:40px;
+  }
+  .content {
+    height:30vh;
+  }
+  h1 {
+    font-size:24px;
+  }
+}
