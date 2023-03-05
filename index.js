@@ -1,11 +1,13 @@
-document.addEventListener("DOMContentLoaded", function() {
-
+document.addEventListener("DOMContentLoaded", () => {
     console.log("hello world!");
-    Data.set_refs();
+    CaroselData.setRefs();
     setUpMenu(); 
     setUpCarosel(); 
 });
 
+// sets up menu items
+// iterates thru each item in menu 
+// adds a property to it. 
 function setUpMenu() { 
     /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax#spread_in_array_literals */
     let menu = document.getElementById('menu-items');
@@ -16,91 +18,238 @@ function setUpMenu() {
     );
 }
 
+// sets up carosel 
+// sets action for when select and leaving page 
+// gets each carosel items, then sets up nav items for them. 
+// then sets up blob
+// starts the carosel loop.  
 function setUpCarosel() { 
+    setUpCaroselSwipe(); 
+
+    // going onto that page:
+    CaroselData.changePageAction = {
+        2 : blobPage
+    }
+
+    // leaving that page: 
+    CaroselData.leavePageAction =  {
+        2 : blobPageLeave
+    }
+
     let caroselItems = [...document.getElementById('carosel-container').children];
     let caroselNavContainer = document.getElementById('carosel-paginator-container');
 
     caroselItems.forEach(
         function(element, index) {
             let index1 = index + 1; 
-            // used twice, no point doing twice!
 
             element.id = `carosel-item-${index1}`;
-            Data.caroselItems.push(element);
+            CaroselData.caroselItems.push(element);
 
             let item = caroselNavContainer.appendChild(
                 Object.assign(
                     document.createElement('div'),
                         { 
-                            className : 'carosel-indicator', 
+                            className : 'carosel-page-indicator', 
                             id : `carosel-pg-${index1}`
                         }
                 )
             );
 
             item.addEventListener('click', partial(changePageClick, index));
-            Data.caroselNavItems.push(item);
+            item.addEventListener('touchstart', partial(changePageClick, index));
+            CaroselData.caroselNavItems.push(item);
         }
-    ); 
+    );
 
+    setUpBlob();
     caroselAnimation(); 
 }
 
+// sets up event listeners 
+// for swipe action for changing page. 
+function setUpCaroselSwipe() {
+    CaroselData.carosel.addEventListener('touchstart', (e) => {
+        mDown(e); 
+        CaroselData.carosel.addEventListener('touchmove', handleMouseDown);
+    });
+    
+    CaroselData.carosel.addEventListener('mousedown', (e) => {
+        mDown(e); 
+        CaroselData.carosel.addEventListener('mousemove', handleMouseDown);
+    });
+    
+    document.addEventListener('touchend', () => {
+        if (!CaroselData.caroselSwipeActive) return;
+        mUp();
+        CaroselData.carosel.removeEventListener('touchmove', handleMouseDown);
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (!CaroselData.caroselSwipeActive) return;
+        mUp();
+        CaroselData.carosel.removeEventListener('mousemove', handleMouseDown);
+    });
+    
+}
 
+/* https://www.youtube.com/watch?v=kySGqoU7X-s */
+// for animation blob,
+// sets up listeners
+// sets up if mouse in: track mouse, else out: auto animation. 
+function setUpBlob() { 
+    CaroselData.currentText = CaroselData.magicText.innerText
+
+    let caroselItem = document.getElementById('carosel-item-3')
+
+    window.addEventListener('resize', function(e) {
+        CaroselData.blobSize = CaroselData.blob.offsetWidth / 2; 
+    });
+
+    caroselItem.addEventListener('mouseleave', (e) => {
+        setBlobRandom();
+    }); 
+
+    caroselItem.addEventListener('mousemove', (e) => {
+        /* from: https://stackoverflow.com/a/42111623 */
+        clearBlobRandom(); 
+        let rect = CaroselData.carosel.getBoundingClientRect();
+        
+        let x = e.clientX - rect.left; //x position within the element.
+        let y = e.clientY - rect.top;  //y position within the element.
+
+        [x, y] = clampBlob(x, y);
+
+        CaroselData.blob.style.left = `${Math.round(x)}px`; 
+        CaroselData.blob.style.top = `${Math.round(y)}px`; 
+    });
+}
+
+// ensures blob is restricted to view. 
+// bottom is restricted to ensure undesirable scroll behaviour does not occur. 
+function clampBlob(x, y) { 
+    CaroselData.blobSize = CaroselData.blob.offsetWidth / 2; 
+    return [
+        clamp(CaroselData.blobSize, x, CaroselData.carosel.offsetWidth - CaroselData.blobSize),
+        clamp(CaroselData.blobSize, y, CaroselData.carosel.offsetHeight - CaroselData.blobSize * 1.75)
+    ];
+}
+
+// when we land on blob page: 
+// sets blob to middle. 
+// enables a blur overlay 
+// on firefox an overlay as child div does not work! 
+function blobPage() {
+    CaroselData.blurOver.style.opacity = "1";
+    CaroselData.blob.style.left = `50%`; 
+    CaroselData.blob.style.top = `50%`; 
+    setBlobRandom();
+    CaroselData.stop = false; 
+    if (CaroselData.magicStopped) {
+        startMagic();
+    }
+}
+
+// when leaving blob page: 
+function blobPageLeave() { 
+    CaroselData.blurOver.style.opacity = "0";
+    clearBlobRandom(); 
+    CaroselData.magicStop = true; 
+}
+
+function setBlobRandom() { 
+    clearBlobRandom(); 
+    if (CaroselData.page != 2) return; 
+
+    CaroselData.blobRandomMove = setInterval(() => {
+        let [x, y] = clampBlob(
+            getRandomInt(CaroselData.carosel.offsetWidth),
+            getRandomInt(CaroselData.carosel.offsetHeight)
+        ); 
+
+        CaroselData.blob.style.left = `${Math.round(x)}px`; 
+        CaroselData.blob.style.top = `${Math.round(y)}px`; 
+
+    }, 2500); 
+}
+
+// stops auto movement if playing. 
+function clearBlobRandom() { 
+    if (CaroselData.blobRandomMove) { 
+        clearInterval(CaroselData.blobRandomMove); 
+    }
+}
+
+// auto changes page for carosel. 
 async function caroselAnimation() { 
     changePage(0)
     
     let timeout = 10; 
     while (true) { 
         await sleep(timeout); 
-        console.log("go!")
-        if (time() < Data.caroselTimer) {
+        if (time() < CaroselData.caroselTimer) {
             continue; 
         } 
 
-        Data.caroselNavItems[Data.page].style.backgroundColor = null;
-
+        CaroselData.caroselNavItems[CaroselData.page].style.backgroundColor = null;
 
         let page = 0; 
-        if (Data.page != Data.caroselNavItems.length-1) { 
-            page = Data.page + 1; 
+        if (CaroselData.page != CaroselData.caroselNavItems.length-1) { 
+            page = CaroselData.page + 1; 
         }
 
         changePage(page); 
     }
 }
 
+// called when changing page. 
+// calls before and after, 
+// also sets css property for page in focus. 
 function changePage(pg) {
-    Data.caroselNavItems[Data.page].style.backgroundColor = null;
-    Data.caroselItems[Data.page].dataset.focus = false; 
-    Data.page = pg;
+    CaroselData.caroselNavItems[CaroselData.page].style.backgroundColor = null;
+    CaroselData.caroselItems[CaroselData.page].dataset.focus = false; 
+    CaroselData.leavePageAction[CaroselData.page]?.(); 
 
-    Data.caroselNavItems[Data.page].style.backgroundColor = 'aqua';
-    Data.caroselContaner.style.transform = `translateX(-${Data.page * 110}%)`
+    CaroselData.page = pg;
 
-    if (Data.caroselFocus) {
-        clearTimeout(Data.caroselFocus);                                                                                                              
-        Data.caroselFocus = null; 
+    CaroselData.caroselNavItems[CaroselData.page].style.backgroundColor = 'aqua';
+    CaroselData.caroselContaner.style.transform = `translateX(-${CaroselData.page * 110}%)`
+
+    if (CaroselData.caroselFocus) {
+        clearTimeout(CaroselData.caroselFocus);                                                                                                              
+        CaroselData.caroselFocus = null; 
     } // ensures we dont have double focused item! 
 
-    Data.caroselFocus = setTimeout(
+    CaroselData.caroselFocus = setTimeout(
         function() {
-            Data.caroselItems[Data.page].dataset.focus = true; 
-            Data.caroselFocus = null;
+            CaroselData.caroselItems[CaroselData.page].dataset.focus = true; 
+            CaroselData.caroselFocus = null;
+            CaroselData.changePageAction[CaroselData.page]?.(); 
         }, 500
     );
 }
 
+// if user input to change page: 
+// if same page - dont change, but extend next page auto change. 
 function changePageClick(pg) {
-    Data.caroselTimer = time() + 30; 
+    CaroselData.caroselTimer = time() + 30; 
+    if (pg == CaroselData.page) return; 
     changePage(pg);
 }
 
 /* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now */
-async function sleep(seconds) {
-    return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+    async function sleep(seconds) {
+        return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+    }
+
+const clamp = (min, num, max) => Math.min(Math.max(num, min), max);
+
+/* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random */
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
 }
 
+// gets current time. 
 function time() {
     return Date.now() / 1000; 
 }
@@ -109,15 +258,254 @@ function time() {
 function partial(func) {
     var args = Array.prototype.slice.call(arguments, 1);
     return function() {
-      var allArguments = args.concat(Array.prototype.slice.call(arguments));
-      return func.apply(this, allArguments);
+        var allArguments = args.concat(Array.prototype.slice.call(arguments));
+        return func.apply(this, allArguments);
     };
 }
 
-class Data { 
-    static nav_bar; 
-    static menu_btn; 
+/* from: https://stackoverflow.com/a/61732450 */
+// gets mouse pos or touch pos. 
+function getMousePos(e) {
+    if (e.type == 'touchstart' || e.type == 'touchmove' || e.type == 'touchend' || e.type == 'touchcancel') {
+        const evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+        const touch = evt.touches[0] || evt.changedTouches[0];
+        var x = touch.pageX;
+        var y = touch.pageY;
+    } else if (e.type == 'mousedown' || e.type == 'mouseup' || e.type == 'mousemove' || e.type == 'mouseover' || e.type == 'mouseout' || e.type == 'mouseenter' || e.type == 'mouseleave') {
+        var x = e.clientX;
+        var y = e.clientY;
+    }
 
+    return [x, y];
+}
+
+// when mouse is down on carosel
+// for swipe animation. 
+function mDown(e) {
+    e.preventDefault()
+    CaroselData.caroselSwipeActive = true;
+    CaroselData.caroselSwipeWidth = CaroselData.carosel.offsetWidth / 4;
+    CaroselData.caroselSwipeStart = getMousePos(e)[0];
+}
+
+// once mouse is up again, 
+// change page if required. 
+function mUp() { 
+    if (CaroselData.caroselSwipeState == CaroselData.Direction.Left) {
+        if (CaroselData.page == 0) { 
+            changePageClick(CaroselData.caroselNavItems.length - 1);
+        } else { 
+            changePageClick(CaroselData.page - 1);
+        }
+    } else if (CaroselData.caroselSwipeState == CaroselData.Direction.Right) {
+        if (CaroselData.page == CaroselData.caroselNavItems.length - 1) {
+            changePageClick(0); 
+        } else { 
+            changePageClick(CaroselData.page + 1); 
+        }
+    }
+
+    resetSwipeState(); 
+}
+
+// reset swipe states. 
+function resetSwipeState() {
+    if (CaroselData.caroselSwipeState == CaroselData.Direction.Left) {
+        CaroselData.caroselLeftIndicator.dataset.left = false;
+    } else if (CaroselData.caroselSwipeState == CaroselData.Direction.Right) {
+        CaroselData.caroselRightIndicator.dataset.right = false;
+    }
+    CaroselData.caroselSwipeState = CaroselData.Direction.None;
+}
+
+// handles all mouse drag events. 
+function handleMouseDown(event) {
+    let mp = getMousePos(event)[0];
+
+    if (mp - CaroselData.caroselSwipeStart > CaroselData.caroselSwipeWidth) {
+        if (CaroselData.caroselSwipeState != CaroselData.Direction.Left) {
+            resetSwipeState(); /* reset everything before we set new state */ 
+            CaroselData.caroselSwipeState = CaroselData.Direction.Left;
+            CaroselData.caroselLeftIndicator.dataset.left = "true";
+        }
+    } else if (CaroselData.caroselSwipeStart - mp > CaroselData.caroselSwipeWidth) {
+        if (CaroselData.caroselSwipeState != CaroselData.Direction.Right) {
+            resetSwipeState();
+            CaroselData.caroselSwipeState = CaroselData.Direction.Right;
+            CaroselData.caroselRightIndicator.dataset.right = "true";
+        }
+    } else {
+        resetSwipeState();
+    }
+}
+
+
+// animates the text effect (single cycle)
+// promise allows this function to be awaited till finish. 
+async function rollText(charAmount) {
+    let iteration = 0;
+
+    return new Promise((resolve) => {
+        let interval = setInterval(() => {
+            CaroselData.magicText.innerText = CaroselData.currentText.split('').map((letter, index) => {
+                if (index < charAmount) {
+                    iteration += 1 / CaroselData.rollAmount * 2;
+                    return CaroselData.currentText[index];
+                }
+                return CaroselData.letters[Math.floor(Math.random() * 26)];
+
+            }).join('');
+
+            if (iteration >= charAmount) {
+                clearInterval(interval);
+                resolve();
+            }
+            iteration += 1 / CaroselData.rollAmount;
+        }, 30);
+    });
+}
+
+// starts magic effect with text. 
+async function startMagic() {
+    CaroselData.magicStopped = false; 
+    console.log("started magic!"); 
+
+    while (!CaroselData.stop) {
+
+        for (let i = CaroselData.currentText.length - 1; i > -1; i--) {
+            await rollText(i);
+        }
+
+        let addText = false;
+        if (CaroselData.currentText.length < CaroselData.newText.length) {
+            addText = true;
+        }
+
+        while (CaroselData.currentText.length != CaroselData.newText.length) {
+            if (addText) {
+                CaroselData.currentText += " ";
+            } else {
+                CaroselData.currentText = CaroselData.currentText.substring(0, CaroselData.currentText.length - 1);
+            }
+
+            for (let i = 0; i < CaroselData.rollAmount; i++) {
+                await rollText(0);
+            }
+        }
+
+        CaroselData.currentText = CaroselData.newText;
+        for (let i = 0; i < CaroselData.currentText.length + 1; i++) {
+            await rollText(i);
+        }
+
+        CaroselData.item += 1;
+        if (CaroselData.item == CaroselData.textValues.length) CaroselData.item = 0;
+        CaroselData.newText = CaroselData.textValues[CaroselData.item];
+
+        generateGradient();
+        addEffect();
+
+        if (!CaroselData.stop) {
+            await sleep(7);
+        }
+
+        removeEffect();
+        await sleep(0.5);
+    }
+
+    CaroselData.magicStopped = true;
+}
+
+// get random int using min max. 
+const getRndInt = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+
+// wraps val around 0 - 360. 
+/* https://stackoverflow.com/a/43780476 */
+function wrap(angle) {
+    angle = Math.round(angle);
+    return angle - 360 * Math.floor(angle * (1 / 360))
+}
+
+// allows setting root var for colors. 
+const setVariables = vars => Object.entries(vars).forEach(v => document.documentElement.style.setProperty(v[0], v[1]));
+
+// generates a gradient. 
+function generateGradient() {
+    let color1 = getRndInt(0, 720);
+    if (color1 > 360) color1 /= 2 // less green prominent (why does green have such big spectrum ;-;)
+    let c1s = getRndInt(50, 75);
+
+    // replace max to: 
+    // Math.sqrt(color1) 
+    // for most tame mode. 
+    let color2 = wrap(color1 -  getRndInt(color1 * 0.1, Math.sqrt(color1) * 1.8 ));
+    let c2s = getRndInt(50, 75); 
+    
+    let color3 = wrap(color1 + Math.min(50, color1 / 4)); 
+    let c3s = getRndInt(30, 100);
+    let c3l = getRndInt(50, 75);
+
+    let colors = {
+        '--color1': `hsl(${color1}, ${c1s}%, ${100 - c1s}%)`,
+        '--color2': `hsl(${color2}, ${c2s}%, ${100 - c2s}%)`,
+        '--color3': `hsl(${color3}, ${c3s}%, ${c3l}%)`
+    }
+
+    setVariables(colors);
+}
+
+// trigger animation. 
+const animate = star => {
+    star.style.setProperty("--star-left", `${getRndInt(-10, 100)}%`);
+    star.style.setProperty("--star-top", `${getRndInt(-40, 80)}%`);
+
+    star.style.animation = "none";
+    star.offsetHeight;
+    star.style.animation = "";
+}
+
+
+let timeouts = [],
+    intervals = [];
+
+const magic = document.querySelector(".magic");
+
+// adds star effect
+function addEffect() {
+    CaroselData.magicText.dataset.content = CaroselData.currentText;
+    CaroselData.magicText.dataset.active = true;
+
+    let index = 1;
+
+    for (const star of document.getElementsByClassName("magic-star")) {
+        timeouts.push(setTimeout(() => {
+            animate(star);
+
+            intervals.push(setInterval(() => animate(star), 1000));
+        }, index++ * 300));
+    };
+}
+
+// removes star effect 
+function removeEffect() {
+    CaroselData.magicText.dataset.active = false;
+
+    for (const t of timeouts) clearTimeout(t);
+    for (const i of intervals) clearInterval(i);
+
+    timeouts = [];
+    intervals = [];
+}
+
+
+
+
+/*
+class holds data to be accessed thru out functions 
+*/
+
+class CaroselData { 
     static carosel; 
     static caroselContaner; 
     static caroselItems = []
@@ -126,11 +514,57 @@ class Data {
     static caroselFocus = null; 
     static page = 0
 
-    static set_refs() { 
-        // Data.nav_bar = document.getElementById("")
-        Data.carosel = document.getElementById('carosel');
-        Data.caroselContaner = document.getElementById('carosel-container'); 
+    static leavePageAction = {}; 
+    static changePageAction = {}; 
 
+    static caroselLeftIndicator; 
+    static caroselRightIndicator; 
+
+    static Direction = {
+        Left: 0, 
+        Right: 1, 
+        None: 2
     }
+    
+    static caroselSwipeActive = false;
+    static caroselSwipeWidth;
+    static caroselSwipeStart;
+    static caroselSwipeState = CaroselData.Direction.None;
 
+    static blob; 
+    static blobSize = 0; 
+    static blobrect; 
+    static blurOver; 
+    static blobRandomMove; 
+
+    static magicText; 
+    static magicStop = false;
+    static magicStopped = true;
+
+    static letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+    static textValues = [
+        'AMAZING',
+        'BREATHTAKING',
+        'AWESOME',
+        'FIRE'
+    ]
+
+    static rollAmount = 10;
+
+    static item = 0;
+    static newText = CaroselData.textValues[CaroselData.item];
+    static currentText;
+
+    static setRefs() { 
+        CaroselData.carosel = document.getElementById('carosel');
+        CaroselData.caroselContaner = document.getElementById('carosel-container'); 
+
+        CaroselData.caroselLeftIndicator = document.getElementById('carosel-left-indicator'); 
+        CaroselData.caroselRightIndicator = document.getElementById('carosel-right-indicator'); 
+
+        CaroselData.blob = document.getElementById('blob');
+        CaroselData.blurOver = document.getElementById('blur-over')
+        CaroselData.magicText = document.getElementById('target');
+    }
 }

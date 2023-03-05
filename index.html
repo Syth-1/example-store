@@ -3,13 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Images</title>
+        <title>gravity.io</title>
         
         <link rel="stylesheet" href="./css/index.css" >
         <link rel="stylesheet" href="./css/nav-bar.css">
         <link rel="stylesheet" href="./css/carosel.css">
-        
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="./css/form.css">
 
         <script type="module" src="./index.js"></script> 
 
@@ -47,11 +46,12 @@
                     </div>
     
                 </div>
-                
             </div>
             
     
             <div class="main-carosel" id="carosel">
+
+
                 <!-- container allows html elemtns inside -->
     
                 <div id="carosel-container">
@@ -68,66 +68,256 @@
                     </div>
     
                     <div class="carosel-content">
-                        <img class="carosel-img" src="./img-src/img3.jpg">
+                        <div id="carosel-3-background"></div>
+                        <div class="fade-in" id="blob"></div>
                     </div>
-
-                    <div class="carosel-content">
-                        <img class="carosel-img" src="./img-src/img1.jpg">
-                    </div>
-    
-                    <div class="carosel-content">
-                        <img class="carosel-img" src="./img-src/img2.jpg">
-                    </div>
-    
-                    <div class="carosel-content">
-                        <img class="carosel-img" src="./img-src/img3.jpg">
-                    </div>
-    
                 </div>
 
+                <!-- bug in firefox, blur not working properly in children! - removed outside for fix -->
+                <div id="blur-over">
+                    <!-- inspired by: https://www.youtube.com/watch?v=W5oawMJaXbU -->
+                    <!-- also inspired by: https://www.youtube.com/watch?v=yu0Cm4BqQv0 -->
+                    <h3 >Customers think our products are<br>
+                        <span class="magic" id="magik-text">
+                        <span class="magic-star" id="star1">
+                            <svg viewBox="0 0 512 512">
+                                <path
+                                    d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+                            </svg>
+                        </span>
+                        <span class="magic-star" id ='star2'>
+                            <svg viewBox="0 0 512 512">
+                                <path
+                                    d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+                            </svg>
+                        </span>
+                        <span class="magic-star" id= star3>
+                            <svg viewBox="0 0 512 512">
+                                <path
+                                    d="M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z" />
+                            </svg>
+                        </span>
+                        <span id=target></span>
+                    </span>
+                    !</h3> 
+                </div>
+                
                 <div class="carosel-paginator">
                     <div id="carosel-paginator-container">
                         <!-- javascript generated! -->
                     </div>
                 </div>
+
+                
+
+                <div id="carosel-left-indicator" class="carosel-swipe-indicator">
+                    <span>←</span>
+                  </div> 
+                  
+                  <div id="carosel-right-indicator" class="carosel-swipe-indicator">
+                      <span>→</span>
+                  </div> 
+
+                  <div class="pre-indicator" id="carosel-pre-left-indicator"></div>
+                  <div class="pre-indicator" id="carosel-pre-right-indicator"></div>
             </div>
 
+            <div class="seperator-ln">
+                <div class="sep"></div>
+                <h1>
+                    Our Products
+                </h1>
+                <div class="sep"></div>
+            </div>
 
-            <h1>Some Images</h1>
             <div id="img-grid">
 
                 <div class="container">
-                    <h2>some text</h2> 
-                    <img class="showcase-img" src="https://source.unsplash.com/500x500/?space">
-        
-
-                    <button>buy!</button>
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/500x500/?space">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 1</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
                 </div> 
 
                 <div class="container">
-                    <h2>some text</h2> 
-                    <img class="showcase-img" src="https://source.unsplash.com/500x500/?sunset">
-                    <button>buy!</button>
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/500x500/?sunset">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 2</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
                 </div> 
 
                 <div class="container">
-                    <h2>some text</h2> 
-                    <img class="showcase-img" src="https://source.unsplash.com/500x500/?abstract">
-                    <button>buy!</button>
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/500x500/?abstract">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 3</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
                 </div> 
 
                 <div class="container">
-                    <h2>some text</h2> 
-                    <img class="showcase-img" src="https://source.unsplash.com/500x500/?random">
-                    <button>buy!</button>
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/500x500/?random">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 4</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
                 </div> 
 
                 <div class="container">
-                    <h2>some text</h2> 
-                    <img class="showcase-img" src="https://source.unsplash.com/500x500/?vivid">
-                    <button>buy!</button>
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/500x500/?vivid">
+                    </div>
+
+                    <div class="card-info">
+                        <h2>Art Collection 5</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
                 </div> 
 
+                <div class="container">
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/250x250/?space">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 6</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
+                </div> 
+
+                <div class="container">
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/250x250/?sunset">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 7</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
+                </div> 
+
+                <div class="container">
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/250x250/?abstract">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 8</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
+                </div> 
+
+                <div class="container">
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/250x250/?random">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 9</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
+                </div> 
+
+                <div class="container">
+                    <div class="img-container">
+                        <img class="showcase-img" src="https://source.unsplash.com/250x250/?vivid">
+                    </div>
+                    <div class="card-info">
+                        <h2>Art Collection 10</h2> 
+                        <h4>price: <span class="price-tag">£12.00</span></h3>
+                        <button>Buy!</button>
+                    </div>
+                </div> 
+
+            </div>
+
+            <div class="seperator-ln">
+                <div class="sep"></div>
+                <h1>
+                    Contact Us
+                </h1>
+                <div class="sep"></div>
+            </div>
+
+            <div class="wave-container">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs>
+                        <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+                    </defs>
+                    <g class="parallax">
+                        <use xlink:href="#gentle-wave" x="48" y="-2" fill="rgba(84,58,183,0.3" />
+                        <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(0,100,360,0.2)" />
+                        <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(84,58,183,0.5)" />
+                    </g>
+                </svg>
+
+                <svg viewBox="0 0 1 1" class="hidden-svg">
+                    <defs>
+                    <clipPath clipPathUnits="objectBoundingBox" transform="scale(0.0075, 0.035)" id="curve">
+                        <path d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 z" fill="#fff" transform="translate(0 -15.5)">
+                        <animateMotion dur="20s" repeatCount="indefinite" path="M 0 0 L 176 0" begin="0s" rotate="auto" />
+                    </clipPath>
+                    </defs>
+                </svg>
+                <div class="main-wave"></div>
+            </div>
+
+            <div id="form">
+                <section class="contact-wrap">
+                    <form action="" class="contact-form">
+            
+                        <div class="form-group">
+                            <div class="input-block">
+                                <input type="text" class="form-control" placeholder=" ">
+                                <label for="">First Name</label>
+                            </div>
+            
+                            <div class="input-block">
+                                <input type="text" class="form-control" placeholder=" ">
+                                <label for="">Last Name</label>
+                            </div>
+                        </div>
+            
+                        <div class="form-group">
+                            <div class="input-block">
+                                <input type="text" class="form-control" placeholder=" ">
+                                <label for="">Email</label>
+                            </div>
+            
+                            <div class="input-block">
+                                <input type="text" class="form-control" placeholder=" ">
+                                <label for="">Phone Number</label>
+                            </div>
+                        </div>
+            
+                        <div class="input-block textarea">
+                            <textarea rows="3" type="text" class="form-control" placeholder=" "></textarea>
+                            <label for="">Drop your message here</label>
+                        </div>
+            
+                        <button class="square-button"><span id="transparent-text">Send</span></button>
+                        <div class="logo-container" id="end-container"> 
+                            <span id="end-txt">GRAVITY.IO LTD |</span> 
+                            <img id="logo-pic-end" src="https://media.discordapp.net/attachments/905582777133580369/1068272939155329034/img.png">
+                        </div>
+                        
+                    </form>
+                </section>
             </div>
         </div>
     </body>
