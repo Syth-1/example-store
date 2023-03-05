@@ -158,7 +158,7 @@ h1 {
     background-color: var(--ui-bg);
     padding-bottom: 10px;
     border-radius: 10px;
-    border: 1px solid var(--ui-main); 
+    border: 1px solid var(--ui-border); 
     position: relative;
     height: fit-content;
     margin: 2%;

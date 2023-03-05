@@ -4,6 +4,7 @@
     --bg-main: #181a1b;
     --bg-color: #181818;
     --ui-bg: #151617;
+    --ui-border: #202020; 
     --ui-main: #303030;
     --ui-hov: #404040;
     --ui-text: #ffffff;
@@ -15,5 +16,5 @@
     --ui-baby-blue: #97B3C6;
     --ui-purple: #ff55ff;
     --ui-peach: #FCD6D3;
-    --ui-border: #6f5b5b;
+    --ui-txt-border: #6f5b5b;
 }
