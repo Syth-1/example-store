@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     console.log("hello world!");
     CaroselData.setRefs();
+
+    generateStars(); 
+    generateCards();
+
     setUpMenu(); 
     setUpCarosel(); 
+    
 });
 
 // sets up menu items
@@ -139,18 +144,21 @@ function clampBlob(x, y) {
 // sets blob to middle. 
 // enables a blur overlay 
 // on firefox an overlay as child div does not work! 
+// have to use hacky work around as a result.  
 function blobPage() {
     CaroselData.blurOver.style.opacity = "1";
     CaroselData.blob.style.left = `50%`; 
     CaroselData.blob.style.top = `50%`; 
     setBlobRandom();
-    CaroselData.stop = false; 
+    CaroselData.magicStop = false; 
     if (CaroselData.magicStopped) {
         startMagic();
     }
 }
 
 // when leaving blob page: 
+// remove blur over
+// we stop animation from running. 
 function blobPageLeave() { 
     CaroselData.blurOver.style.opacity = "0";
     clearBlobRandom(); 
@@ -263,6 +271,26 @@ function partial(func) {
     };
 }
 
+// helped with generator: https://codepen.io/MatthaisUK/pen/oNMXvLG
+function create(tag = "div", options = {}, children = []) {
+    let node = Object.assign(document.createElement(tag), options);
+    if (children.length) node.append(...children);
+    return node;
+}
+
+// NS obj creation: https://stackoverflow.com/a/16489845
+function createSVG(tag = 'svg', options={}, children=[]) {
+    const nameSpace = "http://www.w3.org/2000/svg";
+    let node = Object.assign(document.createElementNS(nameSpace, tag));
+
+    for(var key in options) {
+        node.setAttribute(key, options[key]);
+    }
+
+    if (children.length) node.append(...children);
+    return node;
+}
+
 /* from: https://stackoverflow.com/a/61732450 */
 // gets mouse pos or touch pos. 
 function getMousePos(e) {
@@ -340,6 +368,30 @@ function handleMouseDown(event) {
 }
 
 
+function generateStars() {
+    function createStar(index) {
+        const path = "M512 255.1c0 11.34-7.406 20.86-18.44 23.64l-171.3 42.78l-42.78 171.1C276.7 504.6 267.2 512 255.9 512s-20.84-7.406-23.62-18.44l-42.66-171.2L18.47 279.6C7.406 276.8 0 267.3 0 255.1c0-11.34 7.406-20.83 18.44-23.61l171.2-42.78l42.78-171.1C235.2 7.406 244.7 0 256 0s20.84 7.406 23.62 18.44l42.78 171.2l171.2 42.78C504.6 235.2 512 244.6 512 255.1z"
+
+        return create( "div", { className: "magic-star", id: `star${index}` }, 
+            [
+                createSVG( "svg", { viewBox: "0 0 512 512" },
+                    [
+                        createSVG( "path", { d: path } )
+                    ]
+                )
+            ]
+        )
+    }
+    
+    let magicTxt = document.getElementById('magik-text'); 
+    for (let i = 0; i < 3; i++) {
+        magicTxt.insertBefore(
+            createStar(i+1), CaroselData.magicText
+        )
+    }
+}
+
+
 // animates the text effect (single cycle)
 // promise allows this function to be awaited till finish. 
 async function rollText(charAmount) {
@@ -368,9 +420,8 @@ async function rollText(charAmount) {
 // starts magic effect with text. 
 async function startMagic() {
     CaroselData.magicStopped = false; 
-    console.log("started magic!"); 
 
-    while (!CaroselData.stop) {
+    while (!CaroselData.magicStop) {
 
         for (let i = CaroselData.currentText.length - 1; i > -1; i--) {
             await rollText(i);
@@ -405,7 +456,7 @@ async function startMagic() {
         generateGradient();
         addEffect();
 
-        if (!CaroselData.stop) {
+        if (!CaroselData.magicStop) {
             await sleep(7);
         }
 
@@ -498,7 +549,54 @@ function removeEffect() {
     intervals = [];
 }
 
+function generateCards() {
+    function generateCard(index, res, imgType, price) { 
+        return create( "div", {className: 'container'}, 
+            [
+                create("div", {className: 'img-container'}, [
+                    create('img', {
+                        className: 'showcase-img',
+                        src: `https://source.unsplash.com/${res}x${res}/?${imgType}`
+                    })
+                ]), 
+                create("div", {className: 'card-info'}, [
+                    create("h2", {innerText: `Art Collection ${index}`}), 
+                    create("h4", {innerText: 'Price: '}, [
+                        create("span", {className: 'price-tag', innerText: price})
+                    ]),
+                    create("button", {innerText: 'Buy'})
+                ])
+            ]
+        )
+    }
 
+    const imgTheme = [
+        'space', 
+        'sunset', 
+        'abstract', 
+        'random', 
+        'vivid'
+    ];
+
+    const resolution = [
+        500, 250
+    ];
+
+    let productBox = document.getElementById('products-flex');
+
+    resolution.forEach((res, index1) => {
+        imgTheme.forEach((theme, index2) => {
+            productBox.append(
+                generateCard(
+                    (index1 * 5) + index2 + 1, // get index we are on
+                    res, theme, 
+                    `£${getRndInt(2, 50)}.00` // generate random price
+                )
+            )
+        })
+    })
+
+}
 
 
 /*
@@ -565,6 +663,6 @@ class CaroselData {
 
         CaroselData.blob = document.getElementById('blob');
         CaroselData.blurOver = document.getElementById('blur-over')
-        CaroselData.magicText = document.getElementById('target');
+        CaroselData.magicText = document.getElementById('rolling-text');
     }
 }

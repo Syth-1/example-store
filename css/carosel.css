@@ -459,7 +459,7 @@ h3 {
 }
 
 
-#target {
+#rolling-text {
     position: relative;
     transition: opacity 1s linear, color 1s linear;
     color: white;
@@ -534,15 +534,15 @@ h3 {
     fill: var(--color3);
 }
 
-#target[data-active="true"]::before {
+#rolling-text[data-active="true"]::before {
     opacity: 1;
 }
 
-#target[data-active="true"] {
+#rolling-text[data-active="true"] {
     color: transparent;
 }
 
-#target::before {
+#rolling-text::before {
     animation: background-pan 3s linear infinite;
     background: linear-gradient(to right,
         var(--color1),
