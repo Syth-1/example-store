@@ -283,8 +283,8 @@ function createSVG(tag = 'svg', options={}, children=[]) {
     const nameSpace = "http://www.w3.org/2000/svg";
     let node = Object.assign(document.createElementNS(nameSpace, tag));
 
-    for(var key in options) {
-        node.setAttribute(key, options[key]);
+    for(var key in options) { // get error if using regular method, 
+        node.setAttribute(key, options[key]); // ..cannot asign to read only property. 
     }
 
     if (children.length) node.append(...children);
